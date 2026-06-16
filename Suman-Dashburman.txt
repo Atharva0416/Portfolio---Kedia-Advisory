@@ -1,0 +1,34 @@
+<!-- Filename: Suman-Dasburman.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Portfolio Scorecard - Suman Dasburman</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; }
+        .title { font-size: 20px; font-weight: bold; }
+        .score { font-size: 16px; color: green; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="title">Overall Portfolio Scorecard</div>
+        <p class="score">Overall Rating: GOOD (7.2/10)</p>
+    </div>
+
+    <div class="card">
+        <h3>Key Strengths</h3>
+        <p>Diversified equity exposure, strong commodity hedge via gold & silver ETFs, banking sector gains, quality exposure via HAL, and outperforming UTI Mutual Fund.</p>
+    </div>
+
+    <div class="card">
+        <h3>Key Weaknesses</h3>
+        <p>Over-diversification across 100+ stocks, small-cap stress (IRCTC/IRFC), underperforming mutual funds (HDFC MF Top 200, DSP Top 100), and thematic volatility risk.</p>
+    </div>
+
+    <div class="card">
+        <h3>Risk Status</h3>
+        <p>Moderate to Aggressive risk profile with high diversification complexity.</p>
+    </div>
+</body>
+</html>
