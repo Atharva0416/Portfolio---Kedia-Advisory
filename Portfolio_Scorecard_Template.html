@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Scorecard — Kedia Advisory</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@400;600;700;800&display=swap');
+  :root {
+    --teal: #0B6E5A; --teal-light: #E0F2EC; --teal-mid: #12977A;
+    --gold: #C8972A; --gold-light: #FDF3DC;
+    --red: #B93232; --red-light: #FDEAEA;
+    --amber: #D97706; --amber-light: #FEF3C7;
+    --green: #16A34A; --green-light: #DCFCE7;
+    --bg: #F7F6F2; --card: #FFFFFF; --text: #1A1A18;
+    --muted: #6B7280; --border: #E5E7EB;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+  .topbar { background:var(--teal); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; }
+  .topbar-brand { font-family:'Sora',sans-serif; font-size:17px; font-weight:700; color:#fff; }
+  .topbar-brand span { color:#6EE7C9; }
+  .topbar-tag { font-size:11px; color:#A7F3D8; font-weight:500; letter-spacing:0.5px; text-transform:uppercase; }
+
+  .hero { background:linear-gradient(135deg,var(--teal) 0%,#0D8F72 60%,#12977A 100%); padding:40px 24px 32px; text-align:center; position:relative; overflow:hidden; }
+  .hero::before { content:''; position:absolute; top:-60px; right:-60px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,0.04); }
+  .hero-eyebrow { font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#6EE7C9; margin-bottom:10px; }
+  .hero-name { font-family:'Sora',sans-serif; font-size:28px; font-weight:800; color:#fff; margin-bottom:4px; }
+  .hero-sub { font-size:13px; color:rgba(255,255,255,0.65); margin-bottom:28px; }
+  .score-ring-wrap { display:flex; flex-direction:column; align-items:center; }
+  .score-ring { width:110px; height:110px; border-radius:50%; border:5px solid rgba(255,255,255,0.2); display:flex; flex-direction:column; align-items:center; justify-content:center; background:rgba(255,255,255,0.08); position:relative; }
+  .score-ring::before { content:''; position:absolute; inset:-6px; border-radius:50%; border:2px solid rgba(110,231,201,0.4); }
+  .score-number { font-family:'Sora',sans-serif; font-size:36px; font-weight:800; color:#fff; line-height:1; }
+  .score-denom { font-size:12px; color:rgba(255,255,255,0.5); margin-top:2px; }
+  .score-badge { margin-top:14px; display:inline-block; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); color:#fff; font-size:12px; font-weight:600; padding:5px 16px; border-radius:20px; letter-spacing:0.5px; text-transform:uppercase; }
+
+  .main { padding:20px 16px 100px; max-width:480px; margin:0 auto; }
+  .section-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin:24px 0 10px; }
+
+  .progress-wrap { background:var(--card); border-radius:14px; padding:16px; border:1px solid var(--border); margin-bottom:8px; }
+  .progress-label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px; font-weight:500; }
+  .progress-bar { height:6px; border-radius:6px; background:#F3F4F6; overflow:hidden; margin-bottom:10px; }
+  .progress-bar:last-child { margin-bottom:0; }
+  .progress-fill { height:100%; border-radius:6px; width:0%; transition:width 1.2s cubic-bezier(.4,0,.2,1); }
+  .fill-green { background:linear-gradient(90deg,#16A34A,#4ADE80); }
+  .fill-amber { background:linear-gradient(90deg,#D97706,#FCD34D); }
+  .fill-red { background:linear-gradient(90deg,#B93232,#F87171); }
+  .score-green { color:var(--green); } .score-amber { color:var(--amber); } .score-red { color:var(--red); }
+
+  .param-card { background:var(--card); border-radius:14px; overflow:hidden; border:1px solid var(--border); margin-bottom:8px; }
+  .param-row { display:flex; align-items:center; padding:13px 16px; border-bottom:1px solid #F3F4F6; gap:12px; cursor:pointer; transition:background 0.15s; }
+  .param-row:last-of-type { border-bottom:none; }
+  .param-row:hover { background:#FAFAFA; }
+  .param-icon { width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+  .icon-green { background:var(--green-light); } .icon-amber { background:var(--amber-light); } .icon-red { background:var(--red-light); }
+  .param-info { flex:1; min-width:0; }
+  .param-name { font-size:13px; font-weight:600; color:var(--text); margin-bottom:2px; }
+  .param-note { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .param-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .param-score { font-family:'Sora',sans-serif; font-size:15px; font-weight:700; }
+  .dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .dot-green { background:var(--green); } .dot-amber { background:var(--amber); } .dot-red { background:var(--red); }
+  .param-detail { display:none; padding:10px 16px 14px; font-size:12px; color:var(--muted); line-height:1.6; border-top:1px solid #F3F4F6; }
+  .param-detail.open { display:block; }
+
+  .gold-card { background:linear-gradient(135deg,#FDF3DC,#FEF9EC); border:1px solid #F0D98A; border-radius:14px; padding:16px; margin-bottom:8px; }
+  .gold-header { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .gold-icon { width:30px; height:30px; background:var(--gold); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:15px; }
+  .gold-title { font-size:13px; font-weight:700; color:#92400E; }
+  .gold-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  .gold-stat { text-align:center; }
+  .gold-val { font-family:'Sora',sans-serif; font-size:18px; font-weight:700; color:var(--gold); }
+  .gold-lbl { font-size:10px; color:#92400E; margin-top:2px; }
+  .gold-status { display:inline-block; margin-top:10px; font-size:11px; font-weight:600; padding:4px 12px; border-radius:20px; background:var(--gold); color:#fff; }
+
+  .flag-card { background:var(--card); border-radius:14px; border:1px solid var(--border); overflow:hidden; margin-bottom:8px; }
+  .flag-item { display:flex; align-items:flex-start; gap:10px; padding:12px 16px; border-bottom:1px solid #F3F4F6; }
+  .flag-item:last-child { border-bottom:none; }
+  .flag-sev { font-size:10px; font-weight:700; padding:2px 7px; border-radius:6px; letter-spacing:0.5px; text-transform:uppercase; flex-shrink:0; margin-top:1px; }
+  .sev-high { background:var(--red-light); color:var(--red); }
+  .sev-medium { background:var(--amber-light); color:var(--amber); }
+  .sev-low { background:var(--green-light); color:var(--green); }
+  .flag-text { font-size:12px; color:var(--text); line-height:1.5; }
+  .flag-action { font-size:11px; color:var(--muted); margin-top:2px; }
+
+  .summary-card { background:var(--card); border-radius:14px; border:1px solid var(--border); padding:16px; margin-bottom:8px; }
+  .summary-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #F9FAFB; font-size:13px; }
+  .summary-row:last-child { border-bottom:none; }
+  .summary-label { color:var(--muted); }
+  .summary-value { font-weight:600; color:var(--text); }
+
+  .review-date { text-align:center; font-size:11px; color:var(--muted); margin-top:6px; }
+
+  .cta-wrap { position:fixed; bottom:0; left:0; right:0; padding:16px; background:linear-gradient(to top,var(--bg) 70%,transparent); }
+  .cta-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; max-width:480px; margin:0 auto; background:var(--teal); color:#fff; text-decoration:none; font-size:14px; font-weight:600; padding:15px; border-radius:14px; box-shadow:0 4px 20px rgba(11,110,90,0.35); }
+  .cta-icon { font-size:18px; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  .fade-up { animation:fadeUp 0.4s ease both; }
+  .d1{animation-delay:0.05s} .d2{animation-delay:0.1s} .d3{animation-delay:0.15s} .d4{animation-delay:0.2s} .d5{animation-delay:0.25s}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand">Kedia <span>Advisory</span></div>
+  <div class="topbar-tag">Portfolio Review</div>
+</div>
+
+<div class="hero">
+  <div class="hero-eyebrow">Mutual Fund Portfolio</div>
+  <!-- GPT: Replace CLIENT_NAME -->
+  <div class="hero-name">{{CLIENT_NAME}}</div>
+  <!-- GPT: Replace CLIENT_META e.g. "Age 42 · Moderate Risk · Retirement Goal" -->
+  <div class="hero-sub">Reviewed by Kedia Advisory · {{CLIENT_META}}</div>
+  <div class="score-ring-wrap">
+    <div class="score-ring">
+      <!-- GPT: Replace OVERALL_SCORE e.g. 6.1 -->
+      <div class="score-number" id="scoreDisplay">0</div>
+      <div class="score-denom">out of 10</div>
+    </div>
+    <div class="score-badge" id="scoreBadge">Evaluating...</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="section-label fade-up d1">Client Summary</div>
+  <div class="summary-card fade-up d1">
+    <!-- GPT: Fill each summary-value with real client data -->
+    <div class="summary-row"><span class="summary-label">Total Portfolio Value</span><span class="summary-value">{{TOTAL_VALUE}}</span></div>
+    <div class="summary-row"><span class="summary-label">Monthly SIP</span><span class="summary-value">{{MONTHLY_SIP}}</span></div>
+    <div class="summary-row"><span class="summary-label">Number of Funds</span><span class="summary-value">{{FUND_COUNT}}</span></div>
+    <div class="summary-row"><span class="summary-label">Equity Allocation</span><span class="summary-value">{{EQUITY_PCT}}</span></div>
+    <div class="summary-row"><span class="summary-label">Debt Allocation</span><span class="summary-value">{{DEBT_PCT}}</span></div>
+    <div class="summary-row"><span class="summary-label">Gold Allocation</span><span class="summary-value">{{GOLD_PCT}}</span></div>
+    <div class="summary-row"><span class="summary-label">Regular Plan Funds</span><span class="summary-value">{{REGULAR_COUNT}}</span></div>
+  </div>
+
+  <div class="section-label fade-up d1">Performance Overview</div>
+  <div class="progress-wrap fade-up d1">
+    <!-- GPT: For each parameter replace SCORE_X with actual score out of 10.
+         Set fill class: fill-green if >=7, fill-amber if 4-6.9, fill-red if <4
+         Set data-w to SCORE*10 + "%" e.g. score 7.5 = data-w="75%" -->
+
+    <div class="progress-label"><span>Asset Allocation</span>
+      <span class="{{COLOR_1}}">{{SCORE_1}}/10</span></div>
+    <div class="progress-bar"><div class="progress-fill {{FILL_1}}" data-w="{{SCORE_1_PCT}}"></div></div>
+
+    <div class="progress-label"><span>Diversification</span>
+      <span class="{{COLOR_2}}">{{SCORE_2}}/10</span></div>
+    <div class="progress-bar"><div class="progress-fill {{FILL_2}}" data-w="{{SCORE_2_PCT}}"></div></div>
+
+    <div class="progress-label"><span>Performance vs Benchmark</span>
+      <span class="{{COLOR_3}}">{{SCORE_3}}/10</span></div>
+    <div class="progress-bar"><div class="progress-fill {{FILL_3}}" data-w="{{SCORE_3_PCT}}"></div></div>
+
+    <div class="progress-label"><span>Cost Efficiency</span>
+      <span class="{{COLOR_4}}">{{SCORE_4}}/10</span></div>
+    <div class="progress-bar"><div class="progress-fill {{FILL_4}}" data-w="{{SCORE_4_PCT}}"></div></div>
+
+    <div class="progress-label"><span>Tax Efficiency</span>
+      <span class="{{COLOR_5}}">{{SCORE_5}}/10</span></div>
+    <div class="progress-bar"><div class="progress-fill {{FILL_5}}" data-w="{{SCORE_5_PCT}}"></div></div>
+
+    <div class="progress-label"><span>Liquidity Cover</span>
+      <span class="{{COLOR_6}}">{{SCORE_6}}/10</span></div>
+    <div class="progress-bar"><div class="progress-fill {{FILL_6}}" data-w="{{SCORE_6_PCT}}"></div></div>
+
+    <div class="progress-label"><span>Goal Alignment</span>
+      <span class="{{COLOR_7}}">{{SCORE_7}}/10</span></div>
+    <div class="progress-bar"><div class="progress-fill {{FILL_7}}" data-w="{{SCORE_7_PCT}}"></div></div>
+
+    <div class="progress-label"><span>Gold ETF Positioning</span>
+      <span class="{{COLOR_8}}">{{SCORE_8}}/10</span></div>
+    <div class="progress-bar"><div class="progress-fill {{FILL_8}}" data-w="{{SCORE_8_PCT}}"></div></div>
+
+    <div class="progress-label" style="margin-bottom:0"><span>Risk Management</span>
+      <span class="{{COLOR_9}}">{{SCORE_9}}/10</span></div>
+    <div class="progress-bar" style="margin-bottom:0"><div class="progress-fill {{FILL_9}}" data-w="{{SCORE_9_PCT}}"></div></div>
+  </div>
+
+  <div class="section-label fade-up d2">Detailed Scorecard</div>
+  <div class="param-card fade-up d2">
+
+    <!-- GPT: For each param block replace:
+         ICON_CLASS_X = icon-green / icon-amber / icon-red
+         PARAM_NOTE_X = one line insight with real fund names and numbers
+         COLOR_X = score-green / score-amber / score-red
+         SCORE_X = actual score
+         DOT_X = dot-green / dot-amber / dot-red
+         DETAIL_X = 2-3 sentence explanation with specific figures -->
+
+    <div class="param-row" onclick="toggleDetail(this)">
+      <div class="param-icon {{ICON_CLASS_1}}">📊</div>
+      <div class="param-info">
+        <div class="param-name">Asset Allocation</div>
+        <div class="param-note">{{PARAM_NOTE_1}}</div>
+      </div>
+      <div class="param-right">
+        <div class="param-score {{COLOR_1}}">{{SCORE_1}}</div>
+        <div class="dot {{DOT_1}}"></div>
+      </div>
+    </div>
+    <div class="param-detail">{{DETAIL_1}}</div>
+
+    <div class="param-row" onclick="toggleDetail(this)">
+      <div class="param-icon {{ICON_CLASS_2}}">🔀</div>
+      <div class="param-info">
+        <div class="param-name">Diversification</div>
+        <div class="param-note">{{PARAM_NOTE_2}}</div>
+      </div>
+      <div class="param-right">
+        <div class="param-score {{COLOR_2}}">{{SCORE_2}}</div>
+        <div class="dot {{DOT_2}}"></div>
+      </div>
+    </div>
+    <div class="param-detail">{{DETAIL_2}}</div>
+
+    <div class="param-row" onclick="toggleDetail(this)">
+      <div class="param-icon {{ICON_CLASS_3}}">📈</div>
+      <div class="param-info">
+        <div class="param-name">Performance vs Benchmark</div>
+        <div class="param-note">{{PARAM_NOTE_3}}</div>
+      </div>
+      <div class="param-right">
+        <div class="param-score {{COLOR_3}}">{{SCORE_3}}</div>
+        <div class="dot {{DOT_3}}"></div>
+      </div>
+    </div>
+    <div class="param-detail">{{DETAIL_3}}</div>
+
+    <div class="param-row" onclick="toggleDetail(this)">
+      <div class="param-icon {{ICON_CLASS_4}}">💸</div>
+      <div class="param-info">
+        <div class="param-name">Cost Efficiency</div>
+        <div class="param-note">{{PARAM_NOTE_4}}</div>
+      </div>
+      <div class="param-right">
+        <div class="param-score {{COLOR_4}}">{{SCORE_4}}</div>
+        <div class="dot {{DOT_4}}"></div>
+      </div>
+    </div>
+    <div class="param-detail">{{DETAIL_4}}</div>
+
+    <div class="param-row" onclick="toggleDetail(this)">
+      <div class="param-icon {{ICON_CLASS_5}}">🧾</div>
+      <div class="param-info">
+        <div class="param-name">Tax Efficiency</div>
+        <div class="param-note">{{PARAM_NOTE_5}}</div>
+      </div>
+      <div class="param-right">
+        <div class="param-score {{COLOR_5}}">{{SCORE_5}}</div>
+        <div class="dot {{DOT_5}}"></div>
+      </div>
+    </div>
+    <div class="param-detail">{{DETAIL_5}}</div>
+
+    <div class="param-row" onclick="toggleDetail(this)">
+      <div class="param-icon {{ICON_CLASS_6}}">💧</div>
+      <div class="param-info">
+        <div class="param-name">Liquidity Cover</div>
+        <div class="param-note">{{PARAM_NOTE_6}}</div>
+      </div>
+      <div class="param-right">
+        <div class="param-score {{COLOR_6}}">{{SCORE_6}}</div>
+        <div class="dot {{DOT_6}}"></div>
+      </div>
+    </div>
+    <div class="param-detail">{{DETAIL_6}}</div>
+
+    <div class="param-row" onclick="toggleDetail(this)">
+      <div class="param-icon {{ICON_CLASS_7}}">🎯</div>
+      <div class="param-info">
+        <div class="param-name">Goal Alignment</div>
+        <div class="param-note">{{PARAM_NOTE_7}}</div>
+      </div>
+      <div class="param-right">
+        <div class="param-score {{COLOR_7}}">{{SCORE_7}}</div>
+        <div class="dot {{DOT_7}}"></div>
+      </div>
+    </div>
+    <div class="param-detail">{{DETAIL_7}}</div>
+
+    <div class="param-row" onclick="toggleDetail(this)">
+      <div class="param-icon {{ICON_CLASS_8}}">🥇</div>
+      <div class="param-info">
+        <div class="param-name">Gold ETF Positioning</div>
+        <div class="param-note">{{PARAM_NOTE_8}}</div>
+      </div>
+      <div class="param-right">
+        <div class="param-score {{COLOR_8}}">{{SCORE_8}}</div>
+        <div class="dot {{DOT_8}}"></div>
+      </div>
+    </div>
+    <div class="param-detail">{{DETAIL_8}}</div>
+
+    <div class="param-row" onclick="toggleDetail(this)">
+      <div class="param-icon {{ICON_CLASS_9}}">🛡️</div>
+      <div class="param-info">
+        <div class="param-name">Risk Management</div>
+        <div class="param-note">{{PARAM_NOTE_9}}</div>
+      </div>
+      <div class="param-right">
+        <div class="param-score {{COLOR_9}}">{{SCORE_9}}</div>
+        <div class="dot {{DOT_9}}"></div>
+      </div>
+    </div>
+    <div class="param-detail">{{DETAIL_9}}</div>
+
+  </div>
+
+  <div class="section-label fade-up d3">Gold ETF Analysis</div>
+  <div class="gold-card fade-up d3">
+    <div class="gold-header">
+      <div class="gold-icon">🥇</div>
+      <!-- GPT: Replace GOLD_FUND_NAME with actual fund name or "No Gold ETF Found" -->
+      <div class="gold-title">{{GOLD_FUND_NAME}}</div>
+    </div>
+    <div class="gold-grid">
+      <div class="gold-stat">
+        <!-- GPT: Replace with actual current gold % -->
+        <div class="gold-val">{{GOLD_CURRENT_PCT}}</div>
+        <div class="gold-lbl">Current</div>
+      </div>
+      <div class="gold-stat">
+        <!-- GPT: Replace with target based on risk profile -->
+        <div class="gold-val">{{GOLD_TARGET_PCT}}</div>
+        <div class="gold-lbl">Target</div>
+      </div>
+      <div class="gold-stat">
+        <!-- GPT: Replace with gap = current minus target -->
+        <div class="gold-val">{{GOLD_GAP}}</div>
+        <div class="gold-lbl">Gap</div>
+      </div>
+    </div>
+    <!-- GPT: Replace with ADEQUATE / UNDER-ALLOCATED / OVER-ALLOCATED -->
+    <div><span class="gold-status">{{GOLD_STATUS}}</span></div>
+  </div>
+
+  <div class="section-label fade-up d4">Red Flags Detected</div>
+  <div class="flag-card fade-up d4">
+    <!-- GPT: Generate exactly 5 flag-item blocks from red flag analysis.
+         Use sev-high / sev-medium / sev-low for severity class.
+         FLAG_TEXT_X = clear description with fund name and figures.
+         FLAG_ACTION_X = specific corrective action. -->
+
+    <div class="flag-item">
+      <span class="flag-sev {{SEV_CLASS_1}}">{{SEV_LABEL_1}}</span>
+      <div>
+        <div class="flag-text">{{FLAG_TEXT_1}}</div>
+        <div class="flag-action">Action: {{FLAG_ACTION_1}}</div>
+      </div>
+    </div>
+    <div class="flag-item">
+      <span class="flag-sev {{SEV_CLASS_2}}">{{SEV_LABEL_2}}</span>
+      <div>
+        <div class="flag-text">{{FLAG_TEXT_2}}</div>
+        <div class="flag-action">Action: {{FLAG_ACTION_2}}</div>
+      </div>
+    </div>
+    <div class="flag-item">
+      <span class="flag-sev {{SEV_CLASS_3}}">{{SEV_LABEL_3}}</span>
+      <div>
+        <div class="flag-text">{{FLAG_TEXT_3}}</div>
+        <div class="flag-action">Action: {{FLAG_ACTION_3}}</div>
+      </div>
+    </div>
+    <div class="flag-item">
+      <span class="flag-sev {{SEV_CLASS_4}}">{{SEV_LABEL_4}}</span>
+      <div>
+        <div class="flag-text">{{FLAG_TEXT_4}}</div>
+        <div class="flag-action">Action: {{FLAG_ACTION_4}}</div>
+      </div>
+    </div>
+    <div class="flag-item">
+      <span class="flag-sev {{SEV_CLASS_5}}">{{SEV_LABEL_5}}</span>
+      <div>
+        <div class="flag-text">{{FLAG_TEXT_5}}</div>
+        <div class="flag-action">Action: {{FLAG_ACTION_5}}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GPT: Replace REVIEW_DATE with today's date -->
+  <div class="review-date fade-up d5">Portfolio reviewed on {{REVIEW_DATE}} · Kedia Advisory</div>
+</div>
+
+<div class="cta-wrap">
+  <a class="cta-btn" href="https://wa.me/91XXXXXXXXXX?text=Hi%2C%20I%20just%20reviewed%20my%20MutualMind%20portfolio%20scorecard%20and%20would%20like%20to%20connect%20with%20my%20advisor">
+    <span class="cta-icon">💬</span> Connect with your Advisor
+  </a>
+</div>
+
+<script>
+  // GPT: Replace FINAL_SCORE with overall score e.g. 6.1
+  const target = {{FINAL_SCORE}};
+  // GPT: Replace RATING_LABEL with EXCELLENT / GOOD / NEEDS IMPROVEMENT / POOR
+  const ratingLabel = "{{RATING_LABEL}}";
+  // GPT: Replace RATING_COLOR with #16A34A (green) / #D97706 (amber) / #B93232 (red)
+  const ratingColor = "{{RATING_COLOR}}";
+
+  const el = document.getElementById('scoreDisplay');
+  const badge = document.getElementById('scoreBadge');
+  let current = 0;
+  const step = target / 60;
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = current.toFixed(1);
+    if (current >= target) {
+      clearInterval(timer);
+      badge.textContent = ratingLabel;
+      badge.style.background = ratingColor + '44';
+      badge.style.borderColor = ratingColor + '88';
+    }
+  }, 25);
+
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.querySelectorAll('.progress-fill').forEach(bar => {
+        bar.style.width = bar.dataset.w;
+      });
+    }, 300);
+  });
+
+  function toggleDetail(row) {
+    const detail = row.nextElementSibling;
+    if (detail && detail.classList.contains('param-detail')) {
+      detail.classList.toggle('open');
+    }
+  }
+</script>
+</body>
+</html>
